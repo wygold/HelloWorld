@@ -67,3 +67,4 @@ def run_strategy(smaPeriod):
 for i in range(10, 30):
     run_strategy(i)
     print i
+    print 3
