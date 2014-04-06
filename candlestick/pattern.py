@@ -359,7 +359,6 @@ class Pattern:
         return 0
 
     def isHaramiCross(self) :
-
         # assign today body, bodyhigh, bodylow
         if self.__closeDs.getValueAbsolute(self.tdyPosition) > self.__openDs.getValueAbsolute(self.tdyPosition) :
             tdyRealBody = self.__closeDs.getValueAbsolute(self.tdyPosition)-self.__openDs.getValueAbsolute(self.tdyPosition)
@@ -399,7 +398,7 @@ class Pattern:
             tdyLowerShadow = self.__openDs.getValueAbsolute(self.tdyPosition)-self.__lowDs.getValueAbsolute(self.tdyPosition)
             tdyUpperShadow = self.__highDs.getValueAbsolute(self.tdyPosition)-self.__closeDs.getValueAbsolute(self.tdyPosition)
 
-        if tdyRealBody > 0 and tdyLowerShadow == 0 and abs(tdyRealBody)/self.__openDs.getValueAbsolute(self.tdyPosition) > 0.03 :
+        if tdyRealBody > 0 and tdyLowerShadow < 0.01 and abs(tdyRealBody)/self.__openDs.getValueAbsolute(self.tdyPosition) > 0.03 :
             return 1
         else :
             return 0
@@ -414,7 +413,91 @@ class Pattern:
             tdyLowerShadow = self.__openDs.getValueAbsolute(self.tdyPosition)-self.__lowDs.getValueAbsolute(self.tdyPosition)
             tdyUpperShadow = self.__highDs.getValueAbsolute(self.tdyPosition)-self.__closeDs.getValueAbsolute(self.tdyPosition)
 
-        if tdyRealBody < 0 and tdyUpperShadow == 0 and abs(tdyRealBody)/self.__closeDs.getValueAbsolute(self.tdyPosition) > 0.03 :
+        if tdyRealBody < 0 and tdyUpperShadow < 0.01 and abs(tdyRealBody)/self.__closeDs.getValueAbsolute(self.tdyPosition) > 0.03 :
             return 1
+        else :
+            return 0
+
+    def isUpsideGapTwoCrows(self) :
+        if self.tdyPosition > 2 :
+            # assign today body, bodyhigh, bodylow
+            if self.__closeDs.getValueAbsolute(self.tdyPosition) > self.__openDs.getValueAbsolute(self.tdyPosition) :
+                tdyRealBody = self.__closeDs.getValueAbsolute(self.tdyPosition)-self.__openDs.getValueAbsolute(self.tdyPosition)
+                tdyRealBodyHigh = self.__closeDs.getValueAbsolute(self.tdyPosition)
+                tdyRealBodylow = self.__openDs.getValueAbsolute(self.tdyPosition)
+            else :
+                tdyRealBody = self.__closeDs.getValueAbsolute(self.tdyPosition)-self.__openDs.getValueAbsolute(self.tdyPosition)
+                tdyRealBodyHigh = self.__openDs.getValueAbsolute(self.tdyPosition)
+                tdyRealBodylow = self.__closeDs.getValueAbsolute(self.tdyPosition)
+
+            # assign yesterday body, bodyhigh, bodylow
+            if self.__closeDs.getValueAbsolute(self.tdyPosition-1) > self.__openDs.getValueAbsolute(self.tdyPosition-1) :
+                ystRealBody = self.__closeDs.getValueAbsolute(self.tdyPosition-1)-self.__openDs.getValueAbsolute(self.tdyPosition-1)
+                ystRealBodyHigh = self.__closeDs.getValueAbsolute(self.tdyPosition-1)
+                ystRealBodylow = self.__openDs.getValueAbsolute(self.tdyPosition-1)
+            else :
+                ystRealBody = self.__closeDs.getValueAbsolute(self.tdyPosition-1)-self.__openDs.getValueAbsolute(self.tdyPosition-1)
+                ystRealBodyHigh = self.__openDs.getValueAbsolute(self.tdyPosition-1)
+                ystRealBodylow = self.__closeDs.getValueAbsolute(self.tdyPosition-1)
+
+            #assign the day before yesterday body, bodyhigh, bodylow
+            if self.__closeDs.getValueAbsolute(self.tdyPosition-2) > self.__openDs.getValueAbsolute(self.tdyPosition-2) :
+                preYstRealBody = self.__closeDs.getValueAbsolute(self.tdyPosition-2)-self.__openDs.getValueAbsolute(self.tdyPosition-2)
+                preYstRealBodyHigh = self.__closeDs.getValueAbsolute(self.tdyPosition-2)
+                preYstRealBodylow = self.__openDs.getValueAbsolute(self.tdyPosition-2)
+            else :
+                preYstRealBody = self.__closeDs.getValueAbsolute(self.tdyPosition-2)-self.__openDs.getValueAbsolute(self.tdyPosition-2)
+                preYstRealBodyHigh = self.__openDs.getValueAbsolute(self.tdyPosition-2)
+                preYstRealBodylow = self.__closeDs.getValueAbsolute(self.tdyPosition-2)
+
+
+            if preYstRealBody > 0 and preYstRealBody/preYstRealBodylow>0.02 \
+                    and ystRealBodylow > preYstRealBodyHigh and ystRealBody < 0 \
+                    and tdyRealBodyHigh > ystRealBodyHigh and tdyRealBodylow < ystRealBodylow and tdyRealBody<0 :
+                return 1
+            else :
+                return 0
+        else :
+            return 0
+
+    def isThreeBlackCrows(self) :
+        if self.tdyPosition > 2 :
+            # assign today body, bodyhigh, bodylow
+            if self.__closeDs.getValueAbsolute(self.tdyPosition) > self.__openDs.getValueAbsolute(self.tdyPosition) :
+                tdyRealBody = self.__closeDs.getValueAbsolute(self.tdyPosition)-self.__openDs.getValueAbsolute(self.tdyPosition)
+                tdyRealBodyHigh = self.__closeDs.getValueAbsolute(self.tdyPosition)
+                tdyRealBodylow = self.__openDs.getValueAbsolute(self.tdyPosition)
+            else :
+                tdyRealBody = self.__closeDs.getValueAbsolute(self.tdyPosition)-self.__openDs.getValueAbsolute(self.tdyPosition)
+                tdyRealBodyHigh = self.__openDs.getValueAbsolute(self.tdyPosition)
+                tdyRealBodylow = self.__closeDs.getValueAbsolute(self.tdyPosition)
+
+            # assign yesterday body, bodyhigh, bodylow
+            if self.__closeDs.getValueAbsolute(self.tdyPosition-1) > self.__openDs.getValueAbsolute(self.tdyPosition-1) :
+                ystRealBody = self.__closeDs.getValueAbsolute(self.tdyPosition-1)-self.__openDs.getValueAbsolute(self.tdyPosition-1)
+                ystRealBodyHigh = self.__closeDs.getValueAbsolute(self.tdyPosition-1)
+                ystRealBodylow = self.__openDs.getValueAbsolute(self.tdyPosition-1)
+            else :
+                ystRealBody = self.__closeDs.getValueAbsolute(self.tdyPosition-1)-self.__openDs.getValueAbsolute(self.tdyPosition-1)
+                ystRealBodyHigh = self.__openDs.getValueAbsolute(self.tdyPosition-1)
+                ystRealBodylow = self.__closeDs.getValueAbsolute(self.tdyPosition-1)
+
+            #assign the day before yesterday body, bodyhigh, bodylow
+            if self.__closeDs.getValueAbsolute(self.tdyPosition-2) > self.__openDs.getValueAbsolute(self.tdyPosition-2) :
+                preYstRealBody = self.__closeDs.getValueAbsolute(self.tdyPosition-2)-self.__openDs.getValueAbsolute(self.tdyPosition-2)
+                preYstRealBodyHigh = self.__closeDs.getValueAbsolute(self.tdyPosition-2)
+                preYstRealBodylow = self.__openDs.getValueAbsolute(self.tdyPosition-2)
+            else :
+                preYstRealBody = self.__closeDs.getValueAbsolute(self.tdyPosition-2)-self.__openDs.getValueAbsolute(self.tdyPosition-2)
+                preYstRealBodyHigh = self.__openDs.getValueAbsolute(self.tdyPosition-2)
+                preYstRealBodylow = self.__closeDs.getValueAbsolute(self.tdyPosition-2)
+
+
+            if preYstRealBody < 0  \
+                    and ystRealBodyHigh < preYstRealBodyHigh and ystRealBodylow < preYstRealBodylow and ystRealBody < 0 \
+                    and tdyRealBodyHigh < ystRealBodyHigh and tdyRealBodylow<ystRealBodylow and tdyRealBody<0 :
+                return 1
+            else :
+                return 0
         else :
             return 0

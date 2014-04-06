@@ -83,44 +83,55 @@ class MyStrategy(strategy.BacktestingStrategy):
         #print abc.getLength()
 
         patt=pattern.Pattern(barDs)
-        # if patt.isHammer() > 1.8 :
-        #     print bar.getDateTime(), 'ishammer ', patt.isHammer()
-        #
-        # if patt.isEngulfing() > 0 :
-        #     print bar.getDateTime(), 'isEngulfing ', patt.isEngulfing()
-        #
-        # if patt.isDarkCloudCover() > 0 :
-        #     print bar.getDateTime(), 'isDarkCloudCover ', patt.isDarkCloudCover()
-        #
-        # if patt.isPiercingLine() > 0 :
-        #     print bar.getDateTime(), 'isPiercingLine ', patt.isPiercingLine()
 
-        # if patt.isDojiEveningStar() > 0 :
-        #     print bar.getDateTime(), 'isDojiEveningStar ', patt.isDojiEveningStar()
-        # elif patt.isEveningStar() > 0 :
-        #     print bar.getDateTime(), 'isEveningStar ', patt.isEveningStar()
-        #
-        # if patt.isDojiMorningStar() > 0 :
-        #     print bar.getDateTime(), 'isDojiMorningStar ', patt.isDojiMorningStar()
-        # elif patt.isMorningStar() > 0 :
-        #     print bar.getDateTime(), 'isMorningStar ', patt.isMorningStar()
+        if patt.isHammer() > 1.8 :
+            print bar.getDateTime(), 'ishammer ', patt.isHammer()
+        
+        if patt.isEngulfing() > 0 :
+            print bar.getDateTime(), 'isEngulfing ', patt.isEngulfing()
+        
+        if patt.isDarkCloudCover() > 0 :
+            print bar.getDateTime(), 'isDarkCloudCover ', patt.isDarkCloudCover()
+        
+        if patt.isPiercingLine() > 0 :
+            print bar.getDateTime(), 'isPiercingLine ', patt.isPiercingLine()
+
+        if patt.isDojiEveningStar() > 0 :
+             print bar.getDateTime(), 'isDojiEveningStar ', patt.isDojiEveningStar()
+        elif patt.isEveningStar() > 0 :
+             print bar.getDateTime(), 'isEveningStar ', patt.isEveningStar()
+        
+        if patt.isDojiMorningStar() > 0 :
+             print bar.getDateTime(), 'isDojiMorningStar ', patt.isDojiMorningStar()
+        elif patt.isMorningStar() > 0 :
+             print bar.getDateTime(), 'isMorningStar ', patt.isMorningStar()
 
 
-        # if patt.isShootingStar() > 1.8 :
-        #     print bar.getDateTime(), 'isShootingStar ', patt.isShootingStar()
-        #
-        # if patt.isHarami() > 0 :
-        #     print bar.getDateTime(), 'isHarami ', patt.isHarami()
+        if patt.isShootingStar() > 1.8 :
+             print bar.getDateTime(), 'isShootingStar ', patt.isShootingStar()
+        
+        if patt.isHarami() > 0 :
+             print bar.getDateTime(), 'isHarami ', patt.isHarami()
 
-        # if patt.isHaramiCross() > 0 :
-        #     print bar.getDateTime(), 'isHaramiCross ', patt.isHaramiCross()
-        #
+        if patt.isHaramiCross() > 0 :
+             print bar.getDateTime(), 'isHaramiCross ', patt.isHaramiCross()
+        
 
         if patt.isPositiveBeltHold() > 0 :
-            print bar.getDateTime(), 'isPositiveBeltHold ', patt.isPositiveBeltHold()
-
+             print bar.getDateTime(), 'isPositiveBeltHold ', patt.isPositiveBeltHold()
+        
         if patt.isNegativeBeltHold() > 0 :
-            print bar.getDateTime(), 'isNegativeBeltHold ', patt.isNegativeBeltHold()
+             print bar.getDateTime(), 'isNegativeBeltHold ', patt.isNegativeBeltHold()
+
+        if patt.isUpsideGapTwoCrows() > 0 :
+            print bar.getDateTime(), 'isUpsideGapTwoCrows ', patt.isUpsideGapTwoCrows()
+
+        if patt.isThreeBlackCrows() > 0 :
+            print bar.getDateTime(), 'isThreeBlackCrows ', patt.isThreeBlackCrows()
+
+
+
+
 
     def onFinish(self, bars):
         print "Final portfolio value: $%.2f" % self.getBroker().getEquity()
@@ -135,7 +146,7 @@ def main(plot, instruments, smaPeriod, cash):
     #instruments = ["c07.si","C09.SI","C31.SI","E5H.SI"]
     #instruments = ["h78.si"]
     #feed is a Feed type defined in yahoofeed.py
-    feed = yahoofinance.build_feed(instruments, 2008, 2014, "./Historical_Price")
+    feed = yahoofinance.build_feed(instruments, 2008, 2009, "./Historical_Price")
 
     for instrument in instruments:
         myStrategy = MyStrategy(feed, instrument, smaPeriod, cash)
