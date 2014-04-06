@@ -20,8 +20,8 @@ class MyStrategy(strategy.BacktestingStrategy):
         self.__cash = cash
         self.__i1 = instrument
         self.__sma = ma.SMA(feed[self.__i1].getAdjCloseDataSeries(), smaPeriod)
-        self.__slope=trend.Slope(feed[self.__i1].getAdjCloseDataSeries(),45)
-        self.__slope2=trend.Slope(feed[self.__i1].getAdjCloseDataSeries(),15)
+        self.__slope=trend.Slope(feed[self.__i1].getAdjCloseDataSeries(),30)
+        self.__slope2=trend.Slope(feed[self.__i1].getAdjCloseDataSeries(),5)
 
 
     def onStart(self):
@@ -29,7 +29,7 @@ class MyStrategy(strategy.BacktestingStrategy):
 
     def onEnterOk(self, position):
         execInfo = position.getEntryOrder().getExecutionInfo()
-        print "%s: BUY at $%.2f for $%.2f" % (execInfo.getDateTime(), execInfo.getPrice(), execInfo.getQuantity())
+        print "%s: BUY at $%.2f for %.2f stocks, total spend %.2f" % (execInfo.getDateTime(), execInfo.getPrice(), execInfo.getQuantity(), execInfo.getPrice() * execInfo.getQuantity())
         self.__cash = self.__cash - execInfo.getPrice() * execInfo.getQuantity()
         self.__positions.append(position)
 #        positionTracker=position.getPosTracker()
@@ -38,14 +38,13 @@ class MyStrategy(strategy.BacktestingStrategy):
 
 
     def onEnterCanceled(self, position):
-        self.__position = None
+        self.__positions.pop()
 
     def onExitOk(self, position):
         execInfo = position.getExitOrder().getExecutionInfo()
         print "%s: SELL at $%.2f" % (execInfo.getDateTime(), execInfo.getPrice())
         self.__cash = self.__cash + execInfo.getPrice() * execInfo.getQuantity()
-        self.__position = None
-        self.__positions = []
+        self.__positions.pop()
 
     def onExitCanceled(self, position):
         # If the exit was canceled, re-submit it.
@@ -65,16 +64,21 @@ class MyStrategy(strategy.BacktestingStrategy):
                 # Buy if both long and short slope indicates the price is going up
             if self.__slope[-1]> 0 and self.__slope2[-1]>0 and len(self.__positions) == 0 :
                 # Buy 10 percent of our total cash for the stock
-                share = int(self.__cash * 0.1 / bar.getAdjClose)
+                share = int(self.__cash * 0.1 / bar.getAdjClose())
                 self.__position = self.enterLong(self.__i1, share, True)
                 #keep buy in if both indicates shows position
             elif self.__slope[-1]> 0 and self.__slope2[-1]>0 :
-                share = int(self.__cash * 0.1 / bar.getAdjClose)
+                share = int(self.__cash * 0.1 / bar.getAdjClose())
                 self.__position = self.enterLong(self.__i1, share, True)
-                #eliminate all position if things goes wrong
-            elif (self.__slope2[-1] < 0  ) and self.__position.exitActive() is False:
 
-                self.__position.exit(goodTillCanceled=True)
+        #eliminate all position if things goes wrong
+        #if (self.__slope2[-1] < 0  ) and self.__positions is not None:
+        if len(self.__positions) > 0 :
+            if bar.getAdjClose() < self.__positions[0].getEntryOrder().getExecutionInfo().getPrice() * 0.95 :
+                for position in self.__positions :
+                    if position.exitActive() is False:
+                        position.exit(goodTillCanceled=True)
+
 
 
 
@@ -89,8 +93,8 @@ def main(plot):
 
     # Download the bars.
     # In the instruments,I can provide more instruments.The instruments name can be got from yahoo finance.
-    instruments = ["c07.si","C09.SI","C31.SI"]
-    #instruments = ["c07.si"]
+    #instruments = ["c07.si","C09.SI","C31.SI"]
+    instruments = ["c09.si"]
     #feed is a Feed type defined in yahoofeed.py
     feed = yahoofinance.build_feed(instruments, 2012, 2013, ".")
 
